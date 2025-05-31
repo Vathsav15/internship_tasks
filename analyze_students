@@ -1,0 +1,79 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+df = pd.read_csv('student-mat.csv', sep=';')
+
+# Display the first few rows
+print("First few rows of the dataset:")
+print(df.head())
+
+# Check for missing values
+print("\nMissing values per column:")
+print(df.isnull().sum())
+
+# Display column data types
+print("\nColumn data types:")
+print(df.dtypes)
+
+# Understand the dataset's size
+print("\nDataset shape (rows, columns):")
+print(df.shape)
+
+# Data Cleaning: Remove duplicate entries
+df.drop_duplicates(inplace=True)
+print("\nDataset shape after removing duplicates (rows, columns):")
+print(df.shape)
+
+# Data Analysis Questions
+
+# 1. What is the average score in math (G3)?
+average_g3 = df['G3'].mean()
+print(f"\n1. The average score in math (G3) is: {average_g3:.2f}")
+
+# 2. How many students scored above 15 in their final grade (G3)?
+students_above_15 = df[df['G3'] > 15].shape[0]
+print(f"2. Number of students who scored above 15 in their final grade (G3): {students_above_15}")
+
+# 3. Is there a correlation between study time (studytime) and the final grade (G3)?
+correlation = df['studytime'].corr(df['G3'])
+print(f"3. The correlation between study time and final grade (G3) is: {correlation:.2f}")
+
+# 4. Which gender has a higher average final grade (G3)?
+average_g3_by_gender = df.groupby('sex')['G3'].mean()
+print("\n4. Average final grade (G3) by gender:")
+print(average_g3_by_gender)
+
+highest_avg_gender = average_g3_by_gender.idxmax()
+print(f"   The gender with a higher average final grade (G3) is: {highest_avg_gender}")
+
+# Data Visualization
+
+# 1. Plot a histogram of final grades (G3)
+plt.figure(figsize=(8, 6))
+sns.histplot(df['G3'], bins=10, kde=True)
+plt.title('Distribution of Final Grades (G3)')
+plt.xlabel('Final Grade (G3)')
+plt.ylabel('Number of Students')
+plt.grid(axis='y', alpha=0.75)
+plt.show()
+
+# 2. Create a scatter plot between study time (studytime) and final grade (G3)
+plt.figure(figsize=(10, 7))
+sns.scatterplot(x=df['studytime'], y=df['G3'])
+plt.title('Study Time vs. Final Grade (G3)')
+plt.xlabel('Study Time (weekly hours)')
+plt.ylabel('Final Grade (G3)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.show()
+
+# 3. Create a bar chart comparing the average scores of male and female students
+plt.figure(figsize=(7, 5))
+sns.barplot(x=average_g3_by_gender.index, y=average_g3_by_gender.values, palette='viridis')
+plt.title('Average Final Grade (G3) by Gender')
+plt.xlabel('Gender')
+plt.ylabel('Average Final Grade (G3)')
+plt.ylim(0, 20) # Grades are typically out of 20
+plt.grid(axis='y', alpha=0.75)
+plt.show()
